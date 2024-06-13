@@ -7,6 +7,8 @@ import HomeScreen from './screens/HomeScreen';
 import WorkOutListScreen from './screens/WorkOutListScreen';
 import StartWorkoutScreen from './screens/StartWorkoutScreen';
 import SummaryScreen from './screens/SummaryScreen';
+// import Accelerometer from './screens/Accelerometer';
+import AccelerometerScreen from './screens/AccelerometerScreen';
 
 const Stack = createStackNavigator();
 
@@ -35,6 +37,8 @@ export default function App() {
           <Stack.Screen name="Workout List" component={WorkOutListScreen} />
           <Stack.Screen name="StartWorkout" component={StartWorkoutScreen}/>
           <Stack.Screen name="Summary" component={SummaryScreen}/>
+          <Stack.Screen name="Accelerometer" component={AccelerometerScreen} />
+          
         </Stack.Navigator>
       </NavigationContainer>
     </View>

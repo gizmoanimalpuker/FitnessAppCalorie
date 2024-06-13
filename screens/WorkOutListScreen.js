@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import workouts from '../workouts.json'; // Import the JSON file
+//import { Accelerometer } from 'expo-sensors';
 
 // Define your color scheme
 const colors = {

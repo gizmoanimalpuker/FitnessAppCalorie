@@ -3,6 +3,7 @@ import { View, Text, Button, FlatList, StyleSheet, TouchableOpacity } from 'reac
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const workouts = require('./../workouts.json');
 import { useNavigation } from '@react-navigation/native';
+//import { Accelerometer } from 'expo-sensors';
 
 // Define your color scheme
 const colors = {
