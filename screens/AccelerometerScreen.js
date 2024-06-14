@@ -1,37 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import { Accelerometer } from 'expo-sensors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
-export default function MovementSensorScreen() {
+export default function AccelerometerScreen() {
+  const navigation = useNavigation();
   const [data, setData] = useState({
     x: 0,
     y: 0,
     z: 0,
   });
   const [secondTimer, setSecondTimer] = useState(0);
-  const [intervalTimer, setIntervalTimer] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
   const [initialMovementDetected, setInitialMovementDetected] = useState(false);
-  const [alertShown, setAlertShown] = useState(false);
+  const previousX = useRef(0);
+  const [intervalId, setIntervalId] = useState(null);
 
   useEffect(() => {
-    Accelerometer.setUpdateInterval(100); // Update every 100ms for more responsive detection
+    Accelerometer.setUpdateInterval(100);
 
     const subscription = Accelerometer.addListener(accelerometerData => {
       setData(accelerometerData);
-      if (!initialMovementDetected && isMovementDetected(accelerometerData)) {
+      
+      if (!initialMovementDetected && Math.abs(previousX.current - accelerometerData.x) > 0.1) {
         setInitialMovementDetected(true);
-      }
-      if (initialMovementDetected && !timerActive && isMovementDetected(accelerometerData)) {
         startTimer();
       }
-      if (timerActive && !isMovementDetected(accelerometerData)) {
-        stopTimer();
-      }
-      if (accelerometerData.x > 0.25 && !alertShown) {
-        Alert.alert('Hallo');
-        setAlertShown(true);
-      }
+
+      previousX.current = accelerometerData.x;
     });
 
     return () => {
@@ -40,37 +37,57 @@ export default function MovementSensorScreen() {
   }, []);
 
   useEffect(() => {
-    if (initialMovementDetected) {
-      let interval;
-      if (timerActive) {
-        interval = setInterval(() => {
-          setSecondTimer(prevSecondTimer => prevSecondTimer + 1);
-          setIntervalTimer(prevIntervalTimer => prevIntervalTimer + 1);
-        }, 1000);
-      } else {
-        clearInterval(interval);
-      }
-      return () => clearInterval(interval);
+    
+    let interval;
+    if (initialMovementDetected && timerActive) {
+      interval = setInterval(() => {
+        setSecondTimer(prevSecondTimer => prevSecondTimer + 1);
+      }, 1000);
+      setIntervalId(interval);
+    } else {
+      clearInterval(intervalId);
     }
+    return () => clearInterval(intervalId);
   }, [timerActive, initialMovementDetected]);
 
   const startTimer = () => {
     setTimerActive(true);
   };
 
-  const stopTimer = () => {
+  const pauseTimer = () => {
     setTimerActive(false);
-    setSecondTimer(0); // Reset second timer
-    setIntervalTimer(0); // Reset interval timer
   };
 
-  const isMovementDetected = (currentData) => {
-    const threshold = 0.1; // Adjust the threshold for sensitivity
-    return (
-      Math.abs(currentData.x) > threshold ||
-      Math.abs(currentData.y) > threshold ||
-      Math.abs(currentData.z) > threshold
-    );
+  const handleEndWorkout = async () => {
+    setTimerActive(false);
+    const caloriesBurned = calculateCaloriesBurned(secondTimer);
+    const workoutSummary = {
+      name: "Run",
+      duration: secondTimer,
+      caloriesBurned: caloriesBurned,
+      date: new Date().toISOString(),
+    };
+    await saveWorkoutData(workoutSummary);
+    setSecondTimer(0);
+    clearInterval(intervalId); // Clear interval to stop timer completely
+    Alert.alert('Workout ended and saved successfully.');
+  };
+
+  const saveWorkoutData = async (workoutData) => {
+    try {
+      const existingData = await AsyncStorage.getItem('workout');
+      const newData = existingData ? JSON.parse(existingData) : [];
+      newData.push(workoutData);
+      await AsyncStorage.setItem('workout', JSON.stringify(newData));
+    } catch (error) {
+      console.error('Failed to save workout data:', error);
+    }
+  };
+
+  const calculateCaloriesBurned = (durationInSeconds) => {
+    // Assuming 1 calorie burned per second while running
+    // Adjust this calculation based on your specific scenario
+    return durationInSeconds;
   };
 
   return (
@@ -79,8 +96,14 @@ export default function MovementSensorScreen() {
       <Text style={styles.text}>x: {data.x.toFixed(2)}</Text>
       <Text style={styles.text}>y: {data.y.toFixed(2)}</Text>
       <Text style={styles.text}>z: {data.z.toFixed(2)}</Text>
-      <Text style={styles.text}>Second Timer: {secondTimer}</Text>
-      <Text style={styles.text}>Interval Timer: {intervalTimer}</Text>
+      <Text style={styles.text}>Timer: {secondTimer}</Text>
+      
+      <Button title="End Workout" onPress={handleEndWorkout} disabled={!timerActive} />
+      <Button title="Pause Timer" onPress={pauseTimer} disabled={!timerActive} />
+      <Button
+        title="See Summary"
+        onPress={() => navigation.navigate('Summary')}
+      />
     </View>
   );
 }
