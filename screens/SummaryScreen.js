@@ -17,12 +17,16 @@ export default function SummaryScreen() {
 
         fetchWorkouts();
     }, []);
-
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    };
     const renderItem = ({ item }) => (
         <View style={styles.item}>
             <Text style={styles.title}>{item.name}</Text>
             <Text style={styles.text}>Duration: {item.duration} seconds</Text>
-            <Text style={styles.text}>Date: {item.date}</Text>
+            <Text style={styles.text}>Calories Burned: {item.caloriesBurned} </Text>
+            <Text style={styles.text}>Date: {formatDate(item.date)}</Text>
         </View>
     );
 

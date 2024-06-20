@@ -18,7 +18,7 @@ export default function HomeScreen({ navigation }) {
         style={styles.image}
       />
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>IT'S GO TIME, USER.</Text>
+        <Text style={styles.title}>WE GO JIM!</Text>
         <Text style={styles.time}>{currentTime}</Text>
       </View>
 
@@ -29,9 +29,11 @@ export default function HomeScreen({ navigation }) {
         onPress={() => navigation.navigate('Running')}
         activeOpacity={0.6}
       >
-        <View style={styles.buttonTop}>
-          <Text style={styles.buttonText}>Going on a Run?</Text>
-        </View>
+        <Image
+        source={require('../assets/images/running.png')}
+        style={styles.buttonImage}
+        />
+
       </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
@@ -99,6 +101,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: 'white',
+    alignItems: 'center',
   },
   time: {
     fontSize: 30,
@@ -109,18 +112,22 @@ const styles = StyleSheet.create({
     left: 30,
     right: 20,
     padding: 10,
+    alignContent: 'center'
   },
   buttonBackground: {
     position: 'absolute',
     bottom: 0,
     width: '100%',
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    
   },
   buttonContainer: {
+
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
     paddingHorizontal: 10,
+        
   },
   button: {
     flex: 1,
