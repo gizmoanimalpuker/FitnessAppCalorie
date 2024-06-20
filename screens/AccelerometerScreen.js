@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import { Accelerometer } from 'expo-sensors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-
+//file programmed by Jaden Long and ChatGPT
 export default function AccelerometerScreen() {
   const navigation = useNavigation();
   //make xyz attributes
