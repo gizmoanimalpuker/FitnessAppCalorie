@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-//partially workedo n by Jaden
+//partially worked on by Jaden
 const SummaryScreen = ({ navigation }) => {
   const [workoutHistory, setWorkoutHistory] = useState([]);
 
