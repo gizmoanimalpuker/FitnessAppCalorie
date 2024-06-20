@@ -3,7 +3,7 @@ import { View, Text, Button, FlatList, StyleSheet, TouchableOpacity } from 'reac
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const workouts = require('./../workouts.json');
 import { useNavigation } from '@react-navigation/native';
-
+//partially worked on by Jaden (calorie related functions)
 
 const colors = {
   primary: 'gray', 
